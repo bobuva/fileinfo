@@ -1,10 +1,13 @@
-
+use fltk::{app, prelude::*, *};
 
 fn main() {
     if std::env::args().len() < 2 {
-        println!("usage: fileinfo filename");
+        //println!("usage: fileinfo filename");
+        //return;
+        initialize_ui(None);
         return;
     }
+
     // get the filename as a program argument
     let filename = std::env::args().nth(1).unwrap();
     let filename = filename.trim();
@@ -24,7 +27,7 @@ fn main() {
     let file = std::fs::OpenOptions::new().read(true).open(filename);
     match file {
         Ok(_) => {
-            println!("file exists");
+            initialize_ui(Some(filename));
 
             // dump the contents of the file if it is all UTF-8
             let contents = std::fs::read_to_string(filename).unwrap();
@@ -37,6 +40,40 @@ fn main() {
         }
         Err(_) => {
             println!("The file, {}, does not exist.", filename);
+        }
+    }
+}
+
+fn initialize_ui(filename: Option<&str>) {
+    let title = construct_title(filename);
+
+    let app = app::App::default().with_scheme(app::Scheme::Gtk);
+    let mut win = window::Window::default()
+        .with_size(400, 300)
+        .with_label(&title); // Used the computed title here
+
+    if filename.is_some() {
+        let mut buf = text::TextBuffer::default();
+        let mut txt = text::TextEditor::default()
+            .with_size(400, 200);
+        txt.set_buffer(buf.clone());
+
+        let contents = std::fs::read_to_string(filename.unwrap()).unwrap();
+        buf.set_text(contents.as_str());
+    }
+    win.end();
+    win.show();
+
+
+    app.run().unwrap();
+}
+
+fn construct_title(filename: Option<&str>) -> String {
+    match filename {
+        Some(name) => format!("File Info: {}", name), // Renamed to avoid shadowing
+        None => {
+            println!("No filename provided");
+            "File Info".to_string()
         }
     }
 }
