@@ -1,13 +1,17 @@
+use std::env;
 
 fn main() {
-    if std::env::args().len() < 2 {
+
+    let args: Vec<String> = env::args().collect();
+    let filename = parse_config(&args);
+    let filename = filename.trim();
+
+    if args.len() < 2 {
         println!("usage: fileinfo filename");
         return;
     }
 
-    // get the filename as a program argument
-    let filename = std::env::args().nth(1).unwrap();
-    let filename = filename.trim();
+    println!("FILENAME: {}", filename);
 
     // get file extension and print error message if there is no extension
     if filename.contains('.') == false {
@@ -39,3 +43,10 @@ fn main() {
     }
 }
 
+
+fn parse_config(args: &[String]) -> &str
+{
+    let filename = &args[1];
+
+    filename
+}
