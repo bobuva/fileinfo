@@ -27,7 +27,8 @@ fn main() {
 
     println!("INSTRUCTION: {}", config.instruction);
     println!("FILENAME: {}", filename);
-
+    println!("-----------------------------");
+    
     let mut file_type = FileType::Undefined;
     // assign file type based on extension
     let extension = filename.split('.').last().unwrap();
