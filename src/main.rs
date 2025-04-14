@@ -1,6 +1,6 @@
 use std::env;
+use std::fmt::Debug;
 use std::process;
-
 struct Config {
     instruction: String,
     file_name: String,
@@ -17,13 +17,6 @@ enum FileType {
 
 fn main() {
 
- /*   let x = 5;
-    let y: Option<i32> = None;
-    let z = x + y.unwrap_or_default();
-    let a :i32 = Default::default();
-    println!("The value of z is: {}", z);
-    println!("The value of a is: {}", a);
-*/
     let args: Vec<String> = env::args().collect();
     let config = Config::build(&args).unwrap_or_else(|err| {
         println!("Problem parsing arguments: {err}");
@@ -51,7 +44,7 @@ impl Config {
     fn build(args: &[String]) -> Result<Config, &'static str>
     {
         if args.len() < 3 {
-            return Err("too few arguments");
+            return Err("Usage: fileinfo action filename");
         }
         let instruction = args[1].clone();
         let file_name = args[2].clone();
