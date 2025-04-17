@@ -3,7 +3,8 @@ use std::fmt::Debug;
 use std::process;
 
 mod binary;
-use binary::file_type::{determine_executable_type, ExecutableType};
+use binary::file_type::{determine_executable_type, parse_pe_headers, ExecutableType};
+
 
 
 struct Config {
@@ -81,7 +82,13 @@ fn process_file(file_name: &str, file_type: crate::FileType) {
         FileType::Binary => {
             match determine_executable_type(file_name) {
                 Ok(ExecutableType::ELF) => println!("The file is an ELF executable."),
-                Ok(ExecutableType::PE) => println!("The file is a PE executable."),
+                Ok(ExecutableType::PE) => {
+                    println!("The file is a PE executable.");
+                    parse_pe_headers(file_name).unwrap_or_else(|err| {
+                        println!("Error parsing PE headers: {}", err);
+                        process::exit(1);
+                    });
+                } 
                 Ok(ExecutableType::Unknown) => println!("The file type is unknown."),
                 Err(err) => println!("Error determining executable type: {}", err),
             }
